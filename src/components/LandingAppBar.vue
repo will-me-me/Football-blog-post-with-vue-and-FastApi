@@ -2,9 +2,9 @@
   <div>
     <v-app-bar app color="" id="appbar" dense elevate-on-scroll flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-icon>
+      <!-- <v-app-bar-icon>
         <v-icon x-large>mdi-soccer</v-icon>
-      </v-app-bar-icon>
+      </v-app-bar-icon> -->
       <div>
         <v-btn text to="/" class="ma-6">Home</v-btn>
         <v-btn text to="/blogs" class="ma-6">Blogs</v-btn>
