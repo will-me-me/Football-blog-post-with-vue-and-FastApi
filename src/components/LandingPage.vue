@@ -6,14 +6,13 @@
       <h2 class="display-4 text-center" id="introphrase">
         Take The Ball Pass the Ball
       </h2>
-      <!-- <h3 class="display-4 text-center">The Game is Simple</h3>
-      <h4 class="display-4 text-center">The Rules are Simple</h4> -->
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
+
 import LandingAppBar from "@/components/LandingAppBar.vue";
 export default {
   name: "LandingPage",
@@ -23,6 +22,29 @@ export default {
 
   data: () => ({
     //
+    games: [
+      {
+        hometeam: "Barcelona",
+        awayteam: "Real Madrid",
+        homescore: 3,
+        awayscore: 2,
+        date: "2021-03-21",
+      },
+      {
+        hometeam: "Millan",
+        awayteam: "Juventus",
+        homescore: 3,
+        awayscore: 2,
+        date: "2021-03-21",
+      },
+      {
+        hometeam: "Manchester United",
+        awayteam: "Manchester City",
+        homescore: 3,
+        awayscore: 2,
+        date: "2021-03-21",
+      },
+    ],
   }),
 };
 </script>
@@ -59,6 +81,6 @@ export default {
   font-family: "Montserrat", sans-serif;
   font-weight: 1000;
   color: #fff;
-  text-shadow: 2px 2px 4px #c73c3c;
+  text-shadow: 2px 2px 4px #c46b6b;
 }
 </style>
