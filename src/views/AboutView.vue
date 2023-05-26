@@ -34,17 +34,6 @@
             <v-card-actions>
               <v-btn text>Read More</v-btn>
             </v-card-actions>
-            <v-list two-line>
-              <v-list-item>
-                <v-list-avatar>
-                  <v-img :src="blog.ownerImage"></v-img>
-                </v-list-avatar>
-              </v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>{{ blog.owner }}</v-list-item-title>
-                <v-list-item-subtitle>{{ blog.date }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list>
           </v-card>
         </v-col>
       </v-row>
