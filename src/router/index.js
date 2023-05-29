@@ -21,6 +21,14 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  //single blog
+  {
+    path: "/blogs/:id",
+    name: "blog",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SingleBlogPage.vue"),
+  },
+  //create blog
 ];
 
 const router = new VueRouter({
