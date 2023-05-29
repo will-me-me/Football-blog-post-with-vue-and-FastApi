@@ -2,7 +2,8 @@
   <div class="about">
     <landing-app-bar />
     <v-container id="container">
-      <v-row>
+      <blog-post-carousel />
+      <v-row class="mt-6">
         <v-col
           v-for="blog in blogs"
           :key="blog.title"
@@ -32,23 +33,29 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-btn text>Read More</v-btn>
+              <v-btn text outlined @click="SingleBlogPage">Read More</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
+      <v-pagination circle v-model="page" :length="pages" class="mt-6">
+      </v-pagination>
     </v-container>
   </div>
 </template>
 <script>
 /* eslint-disable */
+import BlogPostCarousel from "@/components/BlogPostCarousel.vue";
 import LandingAppBar from "@/components/LandingAppBar.vue";
 export default {
   name: "AboutView",
   components: {
     LandingAppBar,
+    BlogPostCarousel,
   },
   data: () => ({
+    page: 1,
+    pages: 10,
     blogs: [
       {
         title: "Blog 1",
@@ -156,6 +163,15 @@ export default {
       },
     ],
   }),
+  methods: {
+    pagechange(page) {
+      this.page = page;
+    },
+    SingleBlogPage() {
+      console.log("SingleBlogPage");
+      this.$router.push("/blogs/:id");
+    },
+  },
 };
 </script>
 
@@ -166,10 +182,10 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  height: 125vh;
   width: 100vw;
   opacity: 0.8;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: black;
 }
 #container {
   height: 100vh;
