@@ -8,6 +8,7 @@
             thiis the title of the blog
           </h1>
         </v-card-title>
+        <v-divider></v-divider>
         <v-card-title class="">
           <v-carousel
             hide-delimiter-background
@@ -19,7 +20,7 @@
             progress-color="green "
           >
             <v-carousel-item
-              v-for="(item, i) in 4"
+              v-for="(item, i) in 7"
               :key="i"
               :src="`https://picsum.photos/seed/${i}/1200/300`"
               reverse-transition="fade-transition"
@@ -27,11 +28,13 @@
             ></v-carousel-item>
           </v-carousel>
         </v-card-title>
+        <v-divider></v-divider>
         <v-card-title class="d-flex mt-2">
           <h1 class="overline font-weight-bold" style="ali">
             thiis the title of the blog
           </h1>
         </v-card-title>
+        <v-divider></v-divider>
 
         <v-card-text>
           <p class="text-justify card-text">
@@ -76,6 +79,28 @@
             provident? Iure totam sequi nulla!
           </p>
         </v-card-text>
+        <v-divider></v-divider>
+        <h1 class="overline font-weight-bold">Comments</h1>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-row justify="center">
+            <v-expansion-panels popout>
+              <v-expansion-panel
+                v-for="(item, i) in 2"
+                :key="i"
+                v-model="panelOpen"
+              >
+                <v-expansion-panel-header>Item</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-row>
+        </v-card-text>
         <v-card-actions>
           <v-btn text outlined @click="SingleBlogPage">Read More</v-btn>
           <!-- likes and dislike icons here  -->
@@ -103,11 +128,14 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item>
-                <v-icon color="green"> mdi-pencil </v-icon>
+                <v-icon color="green" @click="openUpdateBlogModel">
+                  mdi-pencil
+                </v-icon>
               </v-list-item>
             </v-list>
           </v-menu>
         </v-card-actions>
+        <v-divider></v-divider>
       </v-card>
       <v-dialog width="400" v-model="deleteDialog">
         <v-card>
@@ -119,6 +147,46 @@
               Cancel
             </v-btn>
             <v-btn color="blue darken-1" text @click="deleteDialog = false">
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog width="700" v-model="UpdateBlogModel">
+        <v-card>
+          <v-card-title class="headline">Update Blog</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="mt-2">
+            <v-text-field
+              id="title"
+              name="title"
+              label="Title"
+              prepend-icon="mdi-pencil"
+              type="text"
+              dense
+              outlined
+            ></v-text-field>
+            <v-textarea
+              id="content"
+              name="content"
+              label="Content"
+              prepend-icon="mdi-pencil"
+              type="text"
+              dense
+              outlined
+            ></v-textarea>
+            <v-file-input>
+              <template v-slot:prepend>
+                <v-btn color="primary" text>Upload</v-btn>
+              </template>
+            </v-file-input>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="UpdateBlogModel = false">
+              Cancel
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="UpdateBlogModel = false">
               OK
             </v-btn>
           </v-card-actions>
@@ -137,13 +205,18 @@ export default {
     LandingAppBar,
   },
   data: () => ({
+    panelOpen: true,
     deleteDialog: false,
+    UpdateBlogModel: false,
     page: 1,
     pages: 10,
   }),
   methods: {
     openDeleteDialog() {
       this.deleteDialog = true;
+    },
+    openUpdateBlogModel() {
+      this.UpdateBlogModel = true;
     },
   },
   //
