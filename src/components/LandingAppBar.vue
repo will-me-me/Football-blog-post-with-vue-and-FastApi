@@ -60,11 +60,30 @@
         <v-card-text>
           <v-form>
             <v-text-field
+              prepend-icon="mdi-email"
+              name="email"
+              label="Email"
+              type="email"
+              dense
+              outlined
+            ></v-text-field>
+            <v-text-field
               prepend-icon="mdi-account"
               name="name"
-              label="Name"
+              label="Username"
               type="text"
+              dense
+              outlined
             ></v-text-field>
+
+            <v-file-input
+              prepend-icon="mdi-camera"
+              name="pic"
+              label="Profile Picture"
+              type="file"
+              dense
+              outlined
+            ></v-file-input>
 
             <v-text-field
               id="password"
@@ -72,6 +91,18 @@
               label="Password"
               prepend-icon="mdi-lock"
               type="password"
+              dense
+              outlined
+            ></v-text-field>
+
+            <v-text-field
+              id="password"
+              name="password"
+              label="Confirm Password"
+              prepend-icon="mdi-lock"
+              type="password"
+              dense
+              outlined
             ></v-text-field>
           </v-form>
         </v-card-text>
