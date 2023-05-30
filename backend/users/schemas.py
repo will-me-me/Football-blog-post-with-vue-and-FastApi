@@ -1,13 +1,37 @@
+# import datetime
+from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from fastapi import HTTPException, status
+from pydantic import BaseModel,Field
+import uuid
+from uuid import uuid4
+
 
 class User(BaseModel):
-    user_id : Optional[int] 
+    # user_id : Optional[str] = Field(alias="_id")
     username : str
     email : str
     password : str
     confirm_password: str
     profile_pic_url : str
+    created : Optional[str]
+
+    def confirm_passwords_match(self):
+        if self.password != self.confirm_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Passwords do not match"
+            )
+        return True
+    
+    def user_dict(self, *args, **kwargs):
+        data = super().dict(*args, **kwargs)
+        # self.user_id = self.user_id or uuid4().hex
+        data.pop("confirm_password", None)
+        data['_id'] = uuid4().hex
+        data.pop("password", None)
+        data['created'] = str(datetime.now())
+        return data
 
 class UserLogin(BaseModel):
     username : str
@@ -20,9 +44,10 @@ class UserUpdate(BaseModel):
     profile_pic_url : str
 
 class UserOut(BaseModel):
-    user_id : int
+    _id : str= Field(..., alias="user_id")
     username : str
     email : str
     profile_pic_url : str
     posts: list = []
-    
+
+
