@@ -1,6 +1,7 @@
 # import datetime
 from datetime import datetime
 from typing import Optional
+from bson import ObjectId
 from fastapi import HTTPException, status
 from pydantic import BaseModel,Field
 import uuid
@@ -28,13 +29,12 @@ class User(BaseModel):
         data = super().dict(*args, **kwargs)
         # self.user_id = self.user_id or uuid4().hex
         data.pop("confirm_password", None)
-        data['_id'] = uuid4().hex
-        data.pop("password", None)
+        data['_id'] = ObjectId()
         data['created'] = str(datetime.now())
         return data
 
 class UserLogin(BaseModel):
-    username : str
+    email : str
     password : str
 
 class UserUpdate(BaseModel):

@@ -7,7 +7,7 @@ import bcrypt
 from pydantic import EmailStr
 import uuid
 
-from users.schemas import User 
+from users.schemas import User, UserLogin, UserUpdate 
 
 
 def encrypt_password(password: str):
@@ -48,6 +48,44 @@ def get_all_users():
     for user in users:
         user["_id"] = str(user["_id"])
     return users
+
+def user_login(user_login: UserLogin):
+    email = user_login.email
+    password = user_login.password
+    user = db.users.find_one({"email": email})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    if not compare_passwords(password, user["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials"
+        )
+    user["_id"] = str(user["_id"])
+    return  user
+
+def update_user_by_id(user_id: str, updated_user: UserUpdate, profile_pic: UploadFile = None):
+    user = db.users.find_one({"_id": ObjectId(user_id)})
+    print("user")
+    print(user)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    updated_user = updated_user.dict(exclude_unset=True)
+    if "password" in updated_user:
+        updated_user["password"] = encrypt_password(updated_user["password"])
+    if profile_pic:
+        updated_user["profile_pic_url"] = save_profile_picture(profile_pic)
+    updated_user["updated"] = str(datetime.now())
+    db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": updated_user}
+    )
+    return updated_user
     
 
 
