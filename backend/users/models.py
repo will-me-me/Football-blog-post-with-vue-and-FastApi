@@ -1,13 +1,16 @@
 import shutil
+from typing import Optional
 from bson import ObjectId
-from fastapi import HTTPException, status, UploadFile
+from fastapi import HTTPException, Request, Security, status, UploadFile
 from db import db
 from datetime import datetime
 import bcrypt
 from pydantic import EmailStr
+from auth.jwt_handler import sign_jwt
 import uuid
+from fastapi.encoders import jsonable_encoder
 
-from users.schemas import User, UserLogin, UserUpdate 
+from users.schemas import User, UserLogin, UserOut, UserUpdate 
 
 
 def encrypt_password(password: str):
@@ -53,6 +56,7 @@ def user_login(user_login: UserLogin):
     email = user_login.email
     password = user_login.password
     user = db.users.find_one({"email": email})
+    # print(user)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -64,7 +68,16 @@ def user_login(user_login: UserLogin):
             detail="Invalid credentials"
         )
     user["_id"] = str(user["_id"])
-    return  user
+    # print( user["_id"] )
+    print(user)
+    user = UserOut(**user).dict()
+    print(user)
+    user = jsonable_encoder(user)
+    # print(user)
+    # print((user))
+    token = sign_jwt(user)
+    # print(user)
+    return {"token": token, "user": user}
 
 def update_user_by_id(user_id: str, updated_user: UserUpdate, profile_pic: UploadFile = None):
     user = db.users.find_one({"_id": ObjectId(user_id)})

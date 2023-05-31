@@ -6,7 +6,7 @@ from users.schemas import UserOut
 
 router = APIRouter()
 
-@router.post("/login", response_model=UserOut)
+@router.post("/login")
 def user_login(user_login: user_models.UserLogin):
     return user_models.user_login(user_login)
 

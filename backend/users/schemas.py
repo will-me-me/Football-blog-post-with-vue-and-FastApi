@@ -9,7 +9,7 @@ from uuid import uuid4
 
 
 class User(BaseModel):
-    # user_id : Optional[str] = Field(alias="_id")
+    _id : Optional[str] = Field(alias="_id")
     username : str
     email : str
     password : str
@@ -44,10 +44,11 @@ class UserUpdate(BaseModel):
     profile_pic_url : str
 
 class UserOut(BaseModel):
-    _id : str= Field(..., alias="user_id")
+    _id :  Optional[str] = Field(alias="_id")
     username : str
     email : str
     profile_pic_url : str
     posts: list = []
+    created : Optional[str]
 
 
