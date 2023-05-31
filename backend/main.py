@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from users.routes import router as users_router
+from posts.routes import router as posts_router
 
 
 
@@ -16,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(users_router, prefix="/users", tags=["users"])
+app.include_router(posts_router, prefix="/posts", tags=["posts"])
 
 
 
