@@ -1,12 +1,17 @@
+from bson import ObjectId
 from pydantic import BaseModel
+from datetime import datetime
+
+from users.schemas import User
 
 class Post(BaseModel):
-    post_id: int
-    user_id: int
+    # user_id: 
     title: str
     content: str
     image_url: str
     created_at: str
+    owner : User
+
 
 class PostCreate(BaseModel):
     user_id: int
