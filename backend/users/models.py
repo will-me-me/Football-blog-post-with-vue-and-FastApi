@@ -6,7 +6,7 @@ from db import db
 from datetime import datetime
 import bcrypt
 from pydantic import EmailStr
-from auth.jwt_handler import sign_jwt
+from auth.jwt_handler import jwt_dependecy, sign_jwt
 import uuid
 from fastapi.encoders import jsonable_encoder
 
@@ -68,16 +68,22 @@ def user_login(user_login: UserLogin):
             detail="Invalid credentials"
         )
     user["_id"] = str(user["_id"])
-    # print( user["_id"] )
-    print(user)
+    print(user['_id'])
     user = UserOut(**user).dict()
-    print(user)
     user = jsonable_encoder(user)
-    # print(user)
-    # print((user))
     token = sign_jwt(user)
-    # print(user)
     return {"token": token, "user": user}
+
+async def get_current_user_id(request: Request, token: str = Security(jwt_dependecy)):
+    user = db.users.find_one({"_id": ObjectId(token)})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    user["_id"] = str(user["_id"])
+    print(user['_id'])
+    return user
 
 def update_user_by_id(user_id: str, updated_user: UserUpdate, profile_pic: UploadFile = None):
     user = db.users.find_one({"_id": ObjectId(user_id)})

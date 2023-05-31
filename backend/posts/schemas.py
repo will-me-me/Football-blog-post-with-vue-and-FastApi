@@ -1,3 +1,5 @@
+# from ast import List
+from typing import Optional, List
 from bson import ObjectId
 from pydantic import BaseModel
 from datetime import datetime
@@ -5,12 +7,19 @@ from datetime import datetime
 from users.schemas import User
 
 class Post(BaseModel):
-    # user_id: 
+    _id: str
     title: str
     content: str
-    image_url: str
+    image_urls: List[str]
     created_at: str
-    owner : User
+    owner: str 
+
+
+    def post_dict(self, *args, **kwargs):
+        data = super().dict(*args, **kwargs)
+        data['_id'] = ObjectId()
+        data['created_at'] = str(datetime.now())
+        return data
 
 
 class PostCreate(BaseModel):
@@ -18,6 +27,12 @@ class PostCreate(BaseModel):
     title: str
     content: str
     image_url: str 
+
+    # def post_dict(self, *args, **kwargs):
+        # data = super().dict(*args, **kwargs)
+        # data['_id'] = ObjectId()
+        # data['created_at'] = str(datetime.now())
+        # return data
 
 
 class PostUpdate(BaseModel):

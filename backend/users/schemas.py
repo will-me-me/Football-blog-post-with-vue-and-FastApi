@@ -9,7 +9,7 @@ from uuid import uuid4
 
 
 class User(BaseModel):
-    _id : Optional[str] = Field(alias="_id")
+    _id : str = Field(..., alias="_id")
     username : str
     email : str
     password : str
@@ -29,7 +29,7 @@ class User(BaseModel):
         data = super().dict(*args, **kwargs)
         # self.user_id = self.user_id or uuid4().hex
         data.pop("confirm_password", None)
-        data['_id'] = ObjectId()
+        # data['_id'] = ObjectId()
         data['created'] = str(datetime.now())
         return data
 
@@ -44,7 +44,7 @@ class UserUpdate(BaseModel):
     profile_pic_url : str
 
 class UserOut(BaseModel):
-    _id :  Optional[str] = Field(alias="_id")
+    _id :  str = Field(..., alias="_id")
     username : str
     email : str
     profile_pic_url : str
