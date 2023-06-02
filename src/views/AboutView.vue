@@ -185,7 +185,6 @@ export default {
   height: 125vh;
   width: 100vw;
   opacity: 0.8;
-  background-color: black;
 }
 #container {
   height: 100vh;
