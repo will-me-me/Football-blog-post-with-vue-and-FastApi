@@ -28,7 +28,20 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/SingleBlogPage.vue"),
   },
-  //create blog
+  //user login
+  {
+    path: "/login",
+    name: "login",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/UserLogin.vue"),
+  },
+  //user register
+  {
+    path: "/register",
+    name: "register",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/UserCreateAccount.vue"),
+  },
 ];
 
 const router = new VueRouter({
