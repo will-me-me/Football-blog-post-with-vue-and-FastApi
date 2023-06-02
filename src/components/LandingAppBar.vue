@@ -8,10 +8,8 @@
       <div>
         <v-btn text to="/" class="ma-6">Home</v-btn>
         <v-btn text to="/blogs" class="ma-6">Blogs</v-btn>
-        <v-btn text @click="opemLoginDialog" class="ma-6">Login</v-btn>
-        <v-btn text @click="openCreateAccountDialog" class="ma-6"
-          >Sign in</v-btn
-        >
+        <v-btn text class="ma-6" to="/login">Login</v-btn>
+        <v-btn text class="ma-6" to="/register">Sign in</v-btn>
       </div>
     </v-app-bar>
     <!-- login dialog -->
