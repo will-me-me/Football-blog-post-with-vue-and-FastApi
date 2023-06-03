@@ -7,118 +7,26 @@
       </v-app-bar-icon> -->
       <div>
         <v-btn text to="/" class="ma-6">Home</v-btn>
-        <v-btn text to="/blogs" class="ma-6">Blogs</v-btn>
-        <v-btn text class="ma-6" to="/login">Login</v-btn>
-        <v-btn text class="ma-6" to="/register">Sign in</v-btn>
+        <v-btn text @click="ToBlogsPath" class="ma-6">Blogs</v-btn>
+        <v-btn text class="ma-6" @click="ToLoginPath">Login</v-btn>
+        <v-btn text class="ma-6" @click="ToCreateAccount">Sign in</v-btn>
       </div>
     </v-app-bar>
-    <!-- login dialog -->
-    <v-dialog v-model="Logindialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Login</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              prepend-icon="mdi-account"
-              name="name"
-              label="Name"
-              type="text"
-            ></v-text-field>
-
-            <v-text-field
-              id="password"
-              name="password"
-              label="Password"
-              prepend-icon="mdi-lock"
-              type="password"
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="Logindialog = false">
-            Close
-          </v-btn>
-          <v-btn color="blue darken-1" text> Login </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- end of login dialog -->
-    <!-- create account dialog -->
-    <v-dialog v-model="createAccountdialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Create Account</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              prepend-icon="mdi-email"
-              name="email"
-              label="Email"
-              type="email"
-              dense
-              outlined
-            ></v-text-field>
-            <v-text-field
-              prepend-icon="mdi-account"
-              name="name"
-              label="Username"
-              type="text"
-              dense
-              outlined
-            ></v-text-field>
-
-            <v-file-input
-              prepend-icon="mdi-camera"
-              name="pic"
-              label="Profile Picture"
-              type="file"
-              dense
-              outlined
-            ></v-file-input>
-
-            <v-text-field
-              id="password"
-              name="password"
-              label="Password"
-              prepend-icon="mdi-lock"
-              type="password"
-              dense
-              outlined
-            ></v-text-field>
-
-            <v-text-field
-              id="password"
-              name="password"
-              label="Confirm Password"
-              prepend-icon="mdi-lock"
-              type="password"
-              dense
-              outlined
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="createAccountdialog = false"
-          >
-            Close
-          </v-btn>
-          <v-btn color="blue darken-1" text> Create Account </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- drawer -->
+    <v-progress-linear
+      v-if="showProgressBar"
+      color="teal"
+      buffer-value="0"
+      value="20"
+      stream
+    ></v-progress-linear>
+    <v-progress-linear
+      v-if="showProgressBarreverse"
+      buffer-value="55"
+      color="success"
+      reverse
+      stream
+      value="30"
+    ></v-progress-linear>
     <v-navigation-drawer v-model="drawer" absolute bottom temporary dark>
       <v-list class="mt-4">
         <v-list-item class="px-14">
@@ -162,11 +70,13 @@
 </template>
 
 <script>
+// import { set } from 'vue/types/umd';
 /* eslint-disable */
 export default {
   data: () => ({
-    Logindialog: false,
-    createAccountdialog: false,
+    showProgressBar: false,
+    showProgressBarreverse: false,
+    value: 0,
     drawer: false,
     items: [
       { title: "Home", icon: "mdi-home", link: "/" },
@@ -174,19 +84,57 @@ export default {
     ],
   }),
 
+  computed: {
+    // CurrentPath() {
+    //   return this.showProgressBar;
+    // },
+    // //
+  },
+
   methods: {
+    ToLoginPath() {
+      const CurrentPath = this.$router.currentRoute.path;
+      if (CurrentPath !== "/login") {
+        this.showProgressBar = true;
+        // this.showProgressBarreverse = true;
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, 1500);
+      }
+    },
+
+    ToCreateAccount() {
+      const CurrentPath = this.$router.currentRoute.path;
+
+      if (CurrentPath !== "/register") {
+        this.showProgressBarreverse = true;
+        setTimeout(() => {
+          this.$router.push("/register");
+        }, 1500);
+      }
+    },
+    ToBlogsPath() {
+      const CurrentPath = this.$router.currentRoute.path;
+
+      if (CurrentPath !== "/blogs") {
+        this.showProgressBarreverse = true;
+        setTimeout(() => {
+          this.$router.push("/blogs");
+        }, 1500);
+      }
+    },
+
     openDrawer() {
       this.drawer = true;
     },
-    opemLoginDialog() {
-      this.Logindialog = true;
-    },
-    openCreateAccountDialog() {
-      this.createAccountdialog = true;
-    },
+
     //
   },
 };
 </script>
 
-<style></style>
+<style>
+.v-progress-circular {
+  margin: 1rem;
+}
+</style>
