@@ -1,39 +1,40 @@
 # from ast import List
 from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel
+from fastapi import Depends, UploadFile
+from pydantic import BaseModel, validator
 from datetime import datetime
+from auth.jwt_handler import get_current_user
+# from posts.models import get_current_user_id
+import posts.models as post_models
 
 from users.schemas import User
 
 class Post(BaseModel):
-    _id: str
+    _id: ObjectId()
     title: str
     content: str
-    image_urls: List[str]
+    images: List[str]
+    created_at: Optional[str] = None
+    owner: Optional[str] = None
+    post_id : Optional[str] = None
+
+    @validator('created_at', pre=True, always=True)
+    def set_created_at(cls, value):
+        return str(datetime.now())
+    
+    # @validator('owner', pre=True, always=True)
+    # def set_owner(cls,  user: dict = Depends(get_current_user)):
+    #     user = post_models.get_current_user_id(user)
+    #     print('user', user)
+    #     return user  
+
+class PostOut(BaseModel):
+    title: str
+    content: str
+    images : List[str]
     created_at: str
-    owner: str 
-
-
-    def post_dict(self, *args, **kwargs):
-        data = super().dict(*args, **kwargs)
-        data['_id'] = ObjectId()
-        data['created_at'] = str(datetime.now())
-        return data
-
-
-class PostCreate(BaseModel):
-    user_id: int
-    title: str
-    content: str
-    image_url: str 
-
-    # def post_dict(self, *args, **kwargs):
-        # data = super().dict(*args, **kwargs)
-        # data['_id'] = ObjectId()
-        # data['created_at'] = str(datetime.now())
-        # return data
-
+    owner: str
 
 class PostUpdate(BaseModel):
     title: str

@@ -1,45 +1,68 @@
+import json
 import shutil
 from typing import List
+import aiofiles
 from bson import ObjectId
-from fastapi import Depends, HTTPException, status, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, status, UploadFile, File
 from auth.jwt_handler import get_current_user, jwt_dependecy
 from db import db
 from datetime import datetime
 import bcrypt
 from pydantic import EmailStr
 import uuid
+from bson.binary import Binary
+from werkzeug.utils import secure_filename
+import os
+from PIL import Image
+from fastapi.staticfiles import StaticFiles
 
 from posts.schemas import Post
+from gridfs import GridFS
 
-def save_post_images(images: List[UploadFile])-> List[str]:
-    images_urls = []
+fs = GridFS(db)
+
+app= FastAPI()
+
+
+UPLOAD_FOLDER = './static/images/'
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+'''give access to static files'''
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+def get_current_user_id( user: dict = Depends(get_current_user)):
+    return user
+
+def allowed_file(filename: str) -> bool:
+    filename = filename.lower()
+    filename = filename.replace(' ', '_')
+    filename = secure_filename(filename)
+    filename = str(uuid.uuid4()) + filename
+    print('filename', filename)
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+async def save_images(images: List[UploadFile]):
+    saved_images = []
     for image in images:
-        image_url = f"static/post_images/{image.filename}"
-        print(image_url)
-        with open(image_url, "wb") as f:
-            f.write(image.file.read())
-        images_urls.append(image_url)
-    return images_urls
+        if allowed_file(image.filename):
+            image.filename = secure_filename(image.filename)
+            image.filename = str(uuid.uuid4()) + image.filename
+            print('image.filename', image.filename)
+            image_path = os.path.join(UPLOAD_FOLDER, image.filename)
+            print('image_path', image_path)
+            
+            async with aiofiles.open(image_path, 'wb') as buffer:
+                content = await image.read()  # async read
+                await buffer.write(content)  # async write
+            saved_images.append(image.filename)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid image format")
+    return saved_images
 
-def create_post(post: Post, image_urls: List[str]):
-    created_at = str(datetime.now())
-    owner = get_current_user()
-    print('owner')
-    print(owner)
-    post_data = post.dict()
-    post_data["image_url"] = image_urls
-    post_data["created_at"] = created_at
-    post_data["owner"] = owner
-    
-    # Save the post to the database using your preferred method
-    saved_post = db.posts.insert_one(post_data)
-    
-    return Post(**saved_post)
-
-   
-   
 def get_all_posts():
-    posts = list(db.posts.find({}))
-    for post in posts:
-        post["_id"] = str(post["_id"])
+    posts = db.posts.find({})
+    posts = [Post(**post) for post in posts]
     return posts
+
+
