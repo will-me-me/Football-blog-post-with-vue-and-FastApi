@@ -21,6 +21,7 @@ app.include_router(posts_router, prefix="/posts", tags=["posts"])
 
 
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}

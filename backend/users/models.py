@@ -47,9 +47,12 @@ def create_user(new_user: User, profile_pic: UploadFile = None):
     
 
 def get_all_users():
-    users = list(db.users.find({}))
-    for user in users:
-        user["_id"] = str(user["_id"])
+    users = db.users.find({})
+    users = [UserOut(**user).dict() for user in users]
+    print(users)
+    # print([user[""] for user in users])
+    # for user in users:
+    #     user["_id"] = str(user["_id"])
     return users
 
 def user_login(user_login: UserLogin):

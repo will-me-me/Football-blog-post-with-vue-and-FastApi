@@ -16,6 +16,7 @@ class User(BaseModel):
     confirm_password: str
     profile_pic_url : str
     created : Optional[str]
+    # user_id = ObjectId
 
     def confirm_passwords_match(self):
         if self.password != self.confirm_password:
@@ -30,6 +31,7 @@ class User(BaseModel):
         # self.user_id = self.user_id or uuid4().hex
         data.pop("confirm_password", None)
         # data['_id'] = ObjectId()
+        data['user_id'] = ObjectId()
         data['created'] = str(datetime.now())
         return data
 
@@ -50,5 +52,6 @@ class UserOut(BaseModel):
     profile_pic_url : str
     posts: list = []
     created : Optional[str]
+    user_id = ObjectId
 
 

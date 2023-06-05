@@ -101,14 +101,14 @@ def get_current_user(jwt_dependecy: HTTPAuthorizationCredentials = Security(secu
     :return: The user object
     """
     user = decodeJWT(jwt_dependecy.credentials)
-    print('user')
-    print(user)
+    # print('user')
+    # print(user)
     if user:
         email = user['email']
         new_user = db.users.find_one({"email": email})
         id = new_user['_id']
         id = user['_id'] = str(id)
-        print(id)
+        # print(id)
         return id
     raise ValueError("Unauthorized: 401")
 
