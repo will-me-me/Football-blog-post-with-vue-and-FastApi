@@ -51,3 +51,43 @@ async def create_post(title: str, content: str,   images: List[UploadFile] = Fil
 async def get_all_posts():
     posts = post_models.get_all_posts()
     return posts
+
+@router.get("/get_post/{post_id}")
+async def get_post(post_id: str):
+    post = post_models.get_post_by_id(post_id)
+    return post
+
+@router.get("/get_user_posts/{user_id}")
+async def get_user_posts(user_id: str):
+    posts = post_models.get_post_by_user_id(user_id)
+    return posts
+
+@router.delete("/delete_post/{post_id}", dependencies=[Depends(jwt_dependecy)])
+async def delete_post(post_id: str, user: dict = Depends(get_current_user)):
+    post = post_models.get_post_by_id(post_id)
+    owner = post_models.get_post_owner(post_id)
+    print('owner', owner)
+    print('user', user)
+    if owner == user:
+        post_models.delete_post_by_id(post_id)
+        return {"message": "Post deleted successfully"}
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+@router.put("/update_post/{post_id}", dependencies=[Depends(jwt_dependecy)])
+async def update_post(post_id: str, title: str, content: str, images: List[UploadFile] = File(...), user: dict = Depends(get_current_user)):
+    post = post_models.get_post_by_id(post_id)
+    owner = post_models.get_post_owner(post_id)
+    if owner == user:
+        saved_images = await post_models.save_images(images)
+        post = post_models.update_post_by_id(post_id, title, content, saved_images)
+        return post
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+
+    
+
+      
+    
+    

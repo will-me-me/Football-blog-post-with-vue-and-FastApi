@@ -1,6 +1,6 @@
 import json
 import shutil
-from typing import List
+from typing import List, Optional
 import aiofiles
 from bson import ObjectId
 from fastapi import Depends, FastAPI, HTTPException, status, UploadFile, File
@@ -65,4 +65,47 @@ def get_all_posts():
     posts = [Post(**post) for post in posts]
     return posts
 
+def get_post_by_id(post_id: str):
+    post = db.posts.find_one({"post_id": post_id})
+    owner = get_post_owner(post_id)
+    print('owner', owner)
+    if post:
+        return Post(**post)
+    else:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+def get_post_by_user_id(user_id: str):
+    posts = db.posts.find({"owner": user_id})
+    posts = [Post(**post) for post in posts]
+    return posts
+
+def get_post_owner(post_id: str):
+    post = db.posts.find_one({"post_id": post_id})
+    if post:
+        return post['owner']
+    else:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+def delete_post_by_id(post_id: str):
+    post = db.posts.find_one({"post_id": post_id})
+    if post:
+        db.posts.delete_one({"post_id": post_id})
+        return True
+    else:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+def update_post_by_id(post_id: str, title: str, content: str, images: Optional[List[str]] = None):
+    post = db.posts.find_one({"post_id": post_id})
+    db_images = post['images']
+    print('images', db_images)
+    for image in images:
+        db_images.append(image)
+    print('db_images', db_images)
+    if post:
+        db.posts.update_one({"post_id": post_id}, {"$set": {"title": title, "content": content, "images": db_images}})
+        return {"message": "Post has been updated successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    
 
