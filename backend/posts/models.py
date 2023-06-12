@@ -39,7 +39,6 @@ def allowed_file(filename: str) -> bool:
     filename = filename.replace(' ', '_')
     filename = secure_filename(filename)
     filename = str(uuid.uuid4()) + filename
-    print('filename', filename)
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 async def save_images(images: List[UploadFile]):
