@@ -1,37 +1,46 @@
 # import datetime
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from bson import ObjectId
-from fastapi import HTTPException, status
-from pydantic import BaseModel,Field
+from fastapi import HTTPException, UploadFile, status
+from pydantic import BaseModel,Field, validator
 import uuid
 from uuid import uuid4
+# from users.models import encrypt_password
 
 
 class User(BaseModel):
-    _id : str = Field(..., alias="_id")
+    _id: Optional[ObjectId]
     username : str
     email : str
     password : str
     confirm_password: str
-    profile_pic_url : str
-    created : Optional[str]
+    bio : Optional[str] 
+    profile_pic_url : Optional[List[UploadFile]]
+    created : Optional[datetime] = None
     # user_id = ObjectId
 
+    @validator('created', pre=True, always=True)
+    def set_created(cls, value):
+        return str(datetime.now())
+    
+    @validator('profile_pic_url', pre=True, always=True)
+    def set_profile_pic_url(cls, value):
+        if value == []:
+            return ['https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png']
+        return value
+    
+    
     def confirm_passwords_match(self):
-        if self.password != self.confirm_password:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Passwords do not match"
-            )
-        return True
+        if self.password == self.confirm_password:
+            return True
+        raise ValueError("Passwords do not match")
     
     def user_dict(self, *args, **kwargs):
         data = super().dict(*args, **kwargs)
-        # self.user_id = self.user_id or uuid4().hex
-        data.pop("confirm_password", None)
-        # data['_id'] = ObjectId()
-        data['user_id'] = ObjectId()
+        data['_id'] = ObjectId()
+        '''pop the confirm passwor'''
+        data.pop('confirm_password')
         data['created'] = str(datetime.now())
         return data
 
@@ -40,18 +49,21 @@ class UserLogin(BaseModel):
     password : str
 
 class UserUpdate(BaseModel):
-    username : str
-    email : str
-    password : str
-    profile_pic_url : str
+    username : Optional[str]
+    email : Optional[str]
+    password : Optional[str]
+    bio : Optional[str]
+    # updated_at : Optional[datetime] = None
 
 class UserOut(BaseModel):
     _id :  str = Field(..., alias="_id")
     username : str
     email : str
-    profile_pic_url : str
+    profile_pic_url : Optional[List[str]]
     posts: list = []
-    created : Optional[str]
+    created : Optional[datetime] = None
     user_id = ObjectId
+
+    
 
 
