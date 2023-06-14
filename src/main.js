@@ -4,10 +4,12 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
-// import SplitCarousel from "vue-split-carousel";
-// import "vue-split-carousel/dist/vue-split-carousel.css";
 
-// Vue.use(SplitCarousel);
+//import pinia
+import { createPinia } from "pinia";
+// import { PiniaPlugin } from "@pinia/vue-composition-api";
+
+Vue.use(createPinia());
 
 Vue.config.productionTip = false;
 
