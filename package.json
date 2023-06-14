@@ -13,6 +13,7 @@
     "swiper": "^9.3.2",
     "vue": "^2.6.14",
     "vue-awesome-swiper": "^5.0.1",
+    "vue-carousel-3d": "^1.0.1",
     "vue-coverflow": "^2.2.0",
     "vue-router": "^3.5.1",
     "vue-split-carousel": "^3.0.1",
