@@ -45,13 +45,7 @@
                   type="file"
                 ></v-file-input>
 
-                <v-textarea
-                  auto-grow
-                  label="Bio"
-                  rows="1"
-                  v-model="bio"
-                  outlined
-                >
+                <v-textarea auto-grow label="Bio" rows="1" outlined>
                 </v-textarea>
               </v-form>
             </v-card-text>
@@ -66,33 +60,30 @@
         </div>
       </v-col>
       <v-divider vertical></v-divider>
-
+      <!-- {{ users }} -->
       <v-col cols="6">
-        <div class="container_create">
-          <!-- <h1 class="display-1 text-center" id="introtext">Simple Rules</h1> -->
-          <!-- <h2 class="display-4 text-center" id="">
-            Take The Ball Pass the Ball
-          </h2> -->
-        </div>
+        <div class="container_create"></div>
       </v-col>
     </v-row>
   </div>
 </template>
 
-<script>
+<script setup>
 /* eslint-disable */
 import LandingAppBar from "@/components/LandingAppBar.vue";
+import { useUserStore } from "@/store/userStore";
+import { computed, onMounted } from "vue";
 
-export default {
-  name: "UserCreateAccount",
-  components: {
-    LandingAppBar,
-  },
-  data: () => ({
-    // bio: "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts",
-    //
-  }),
+// register the componet landing app bar
+const components = {
+  LandingAppBar,
 };
+const Store = useUserStore();
+const users = computed(() => Store.getUsers);
+// console.log(users);
+onMounted(async () => {
+  await Store.fetchUsers();
+});
 </script>
 
 <style>
