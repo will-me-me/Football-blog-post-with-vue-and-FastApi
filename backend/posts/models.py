@@ -1,4 +1,5 @@
 import json
+import secrets
 import shutil
 from typing import List, Optional
 import aiofiles
@@ -24,11 +25,11 @@ fs = GridFS(db)
 app= FastAPI()
 
 
-UPLOAD_FOLDER = './static/images/'
+UPLOAD_FOLDER = 'static/images/'
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 '''give access to static files'''
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=UPLOAD_FOLDER), name="static")
 
 
 def get_current_user_id( user: dict = Depends(get_current_user)):
@@ -46,18 +47,28 @@ async def save_images(images: List[UploadFile]):
     for image in images:
         if allowed_file(image.filename):
             image.filename = secure_filename(image.filename)
-            image.filename = str(uuid.uuid4()) + image.filename
+            image.filename = secrets.token_hex(10) + image.filename
             print('image.filename', image.filename)
             image_path = os.path.join(UPLOAD_FOLDER, image.filename)
             print('image_path', image_path)
-            
-            async with aiofiles.open(image_path, 'wb') as buffer:
-                content = await image.read()  # async read
-                await buffer.write(content)  # async write
+            image_url = f"http://localhost:8000/{image_path}"
+            print('image_url', image_url)
+            file_content = await image.read()
+            with open(image_path, 'wb') as f:
+                f.write(file_content)
+            image.filename = image_url
             saved_images.append(image.filename)
+            print('saved_images', saved_images)
         else:
             raise HTTPException(status_code=400, detail="Invalid image format")
     return saved_images
+    #         async with aiofiles.open(image_path, 'wb') as buffer:
+    #             content = await image.read()  # async read
+    #             await buffer.write(content)  # async write
+    #         saved_images.append(image.filename)
+    #     else:
+    #         raise HTTPException(status_code=400, detail="Invalid image format")
+    # return saved_images
 
 def get_all_posts():
     posts = db.posts.find({})

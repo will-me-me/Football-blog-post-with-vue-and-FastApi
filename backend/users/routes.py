@@ -12,6 +12,7 @@ router = APIRouter()
 def user_login(user_login: user_models.UserLogin):
     return user_models.user_login(user_login)
 
+
 @router.post("/create-user")
 async def create_user(
     username: str,
@@ -19,7 +20,7 @@ async def create_user(
     password: str,
     confirm_password: str,
     bio : str,
-    profile_pic_url: Optional[List[UploadFile]]
+    profile_pic_url:  Optional[UploadFile] = File(None) 
 ):
     return await user_models.create_user(username, email, password, confirm_password, bio, profile_pic_url)
 

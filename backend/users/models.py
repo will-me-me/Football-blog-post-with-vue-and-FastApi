@@ -1,4 +1,5 @@
 import os
+import secrets
 import shutil
 from typing import List, Optional
 import aiofiles
@@ -39,26 +40,27 @@ def compare_passwords(pass_1:str, pass_2:str):
     return bcrypt.checkpw(pass_1.encode(), pass_2.encode())
 
 
-async def save_profile_picture(images: List[UploadFile]):
+async def save_profile_picture(images: Optional[UploadFile] = None):
     saved_images = []
-    for image in images:
-        if allowed_file(image.filename):
-            image.filename = secure_filename(image.filename)
-            image.filename = str(uuid.uuid4()) + image.filename
-            image_path = os.path.join(UPLOAD_FOLDER, image.filename)
+    if images:
+        if allowed_file(images.filename):
+            images.filename = secure_filename(images.filename)
+            images.filename = secrets.token_hex(8) + images.filename
+            image_path = os.path.join(UPLOAD_FOLDER, images.filename)
             image_url = f"http://localhost:8000/{image_path}"
             print(image_url)
             async with aiofiles.open(image_path, 'wb') as buffer:
-                content = await image.read()  # async read
-                await buffer.write(content)  # async write
-                image.filename = image_url
-            saved_images.append(image.filename)
+                content = await images.read()
+                # print(content)
+                await buffer.write(content)
+                images.filename = image_url
+            saved_images.append(images.filename)
         else:
             raise HTTPException(status_code=400, detail="Invalid image format")
     return saved_images
 
 
-async def create_user(username: str, email: str,  password: str, confirm_password:str,  bio: str, profile_pic_url: List[UploadFile]):
+async def create_user(username: str, email: str,  password: str, confirm_password:str,  bio: str, profile_pic_url: Optional[UploadFile] = None):
     user = User( 
         username=username,
         email=email,
@@ -71,7 +73,7 @@ async def create_user(username: str, email: str,  password: str, confirm_passwor
     user_dict = user.user_dict()
     
     '''make the profile_pic_url an optional field and set a default value if it is empty'''
-    if user_dict['profile_pic_url'] == []:
+    if user_dict['profile_pic_url'] == None:
         user_dict['profile_pic_url'] = ['https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png']
     else:
         user_dict['profile_pic_url'] = await save_profile_picture(user_dict['profile_pic_url'])

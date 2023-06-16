@@ -16,7 +16,7 @@ class User(BaseModel):
     password : str
     confirm_password: str
     bio : Optional[str] 
-    profile_pic_url : Optional[List[UploadFile]]
+    profile_pic_url :  Optional[UploadFile] = Field(None)
     created : Optional[datetime] = None
     # user_id = ObjectId
 
