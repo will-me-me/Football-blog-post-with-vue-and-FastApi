@@ -47,8 +47,11 @@ async def save_profile_picture(images: Optional[UploadFile] = None):
             images.filename = secure_filename(images.filename)
             images.filename = secrets.token_hex(8) + images.filename
             image_path = os.path.join(UPLOAD_FOLDER, images.filename)
-            image_url = f"http://localhost:8000/{image_path}"
+            image_url = image_path
+            absolute_path = os.path.abspath(image_path)
+            print("absolute_path:", absolute_path)
             print(image_url)
+            image_url = absolute_path
             async with aiofiles.open(image_path, 'wb') as buffer:
                 content = await images.read()
                 # print(content)
