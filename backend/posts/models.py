@@ -51,7 +51,10 @@ async def save_images(images: List[UploadFile]):
             print('image.filename', image.filename)
             image_path = os.path.join(UPLOAD_FOLDER, image.filename)
             print('image_path', image_path)
-            image_url = f"http://localhost:8000/{image_path}"
+            image_url = image_path
+            absolute_path = os.path.abspath(image_path)
+            print("absolute_path:", absolute_path)
+            image_url = absolute_path
             print('image_url', image_url)
             file_content = await image.read()
             with open(image_path, 'wb') as f:
