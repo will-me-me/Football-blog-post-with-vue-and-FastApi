@@ -7,7 +7,6 @@ import vuetify from "./plugins/vuetify";
 
 //import pinia
 import { createPinia } from "pinia";
-// import { PiniaPlugin } from "@pinia/vue-composition-api";
 
 Vue.use(createPinia());
 

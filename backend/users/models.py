@@ -72,6 +72,8 @@ async def create_user(username: str, email: str,  password: str, confirm_passwor
         bio=bio,
         profile_pic_url=profile_pic_url,
     )
+
+    print("user: ", user)
     
     user_dict = user.user_dict()
     

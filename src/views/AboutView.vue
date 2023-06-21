@@ -12,30 +12,39 @@
           md="4"
           lg="3"
         >
-          <v-card width="100%" class="mx-auto" flat>
-            <v-card-title class="white--text">
-              <v-carousel
-                hide-delimiter-background
-                show-arrows-on-hover
-                width="100%"
-                height="200"
-              >
-                <v-carousel-item
-                  v-for="(item, i) in blog.blogImages"
-                  :key="i"
-                  :src="item"
-                ></v-carousel-item>
-              </v-carousel>
-            </v-card-title>
+          <v-hover>
+            <template v-slot:default="{ hover }">
+              <v-card hover outlined width="100%" class="mx-auto" flat>
+                <v-card-title class="white--text">
+                  <v-carousel
+                    hide-delimiter-background
+                    show-arrows-on-hover
+                    width="100%"
+                    height="200"
+                  >
+                    <v-carousel-item
+                      v-for="(item, i) in blog.blogImages"
+                      :key="i"
+                      :src="item"
+                    ></v-carousel-item>
+                  </v-carousel>
+                </v-card-title>
 
-            <v-card-text>
-              {{ blog.content }}
-            </v-card-text>
+                <v-card-text>
+                  {{ blog.content }}
+                </v-card-text>
 
-            <v-card-actions>
-              <v-btn text outlined @click="SingleBlogPage">Read More</v-btn>
-            </v-card-actions>
-          </v-card>
+                <v-card-actions>
+                  <v-btn text outlined @click="SingleBlogPage">Read More</v-btn>
+                </v-card-actions>
+                <v-fade-transition>
+                  <v-overlay v-if="hover" absolute color="#036358">
+                    {{ blog.content }}
+                  </v-overlay>
+                </v-fade-transition>
+              </v-card>
+            </template>
+          </v-hover>
         </v-col>
       </v-row>
       <v-pagination circle v-model="page" :length="pages" class="mt-6">
@@ -54,6 +63,7 @@ export default {
     BlogPostCarousel,
   },
   data: () => ({
+    overlay: false,
     page: 1,
     pages: 10,
     blogs: [
@@ -184,7 +194,7 @@ export default {
   background-position: center;
   height: 125vh;
   width: 100vw;
-  opacity: 0.8;
+  opacity: 1;
 }
 #container {
   height: 100vh;
