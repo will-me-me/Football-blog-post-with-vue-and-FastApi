@@ -4,32 +4,43 @@
     <div id="overlaydiv" class="rounded-lg">
       <h1 class="display-1 text-center" id="introtext">Simple Rules</h1>
       <h2 class="display-4 text-center" id="introphrase">
-        Take The Ball, Pass the Ball
+        Take The Ball, Pass the Ball.
       </h2>
       <div class="d-flex justify-center mt-12">
         <v-spacer></v-spacer>
 
         <v-btn
+          rounded
           :loading="loading"
           :disabled="loading"
           @click="loader = 'loading'"
           color="primary"
           large
-          class="ma-6 d-flex justify-center"
+          class="ma-4 d-flex justify-center"
         >
           <v-icon left small>mdi-book</v-icon>
           blogs
         </v-btn>
         <v-spacer></v-spacer>
 
-        <v-btn large color="yellow darken-2" class="ma-6 d-flex justify-center">
+        <v-btn
+          rounded
+          large
+          color="yellow darken-2"
+          class="ma-4 d-flex justify-center"
+        >
           <v-icon left small>mdi-account-plus</v-icon>
 
           Sign Up
         </v-btn>
         <v-spacer></v-spacer>
 
-        <v-btn large color="green darken-1" class="ma-6 d-flex justify-center">
+        <v-btn
+          rounded
+          large
+          color="green darken-1"
+          class="ma-4 d-flex justify-center"
+        >
           <v-icon left small>mdi-login</v-icon>
           Login
         </v-btn>
@@ -40,7 +51,7 @@
           mdi-arrow-down-bold-outline
         </v-icon>
         <v-icon x-large color="red" size="10">
-          mdi-arrow-down-bold-outline
+          mdi-arrow-up-bold-outline
         </v-icon>
       </div>
       <div>
@@ -56,10 +67,10 @@
     <div id="carusel_div">
       <v-container>
         <h1 class="display-1 text-center" id="resultstext">Results</h1>
-        <carousel-3d :autoplay="true" :autoplay-timeout="4500" class="mt-4">
+        <carousel-3d :autoplay="true" :autoplay-timeout="1000" class="mt-4">
           <!-- Add your slides here -->
           <slide v-for="(game, i) in games" :key="game.id" :index="i">
-            <v-card width="360" height="270" hover outlined>
+            <v-card width="360" height="270" hover outlined color="transparent">
               <v-card-title class="d-flex justify-center">
                 <h1 class="overline">{{ game.hometeam }}</h1>
                 <v-spacer></v-spacer>
@@ -92,7 +103,7 @@
                 </v-avatar>
               </v-card-text>
               <v-card-text class="d-flex justify-center">
-                <p class="overline font-weight-black">
+                <p class="overline font-weight-black title">
                   {{ game.homescore }} - {{ game.awayscore }}
                 </p>
               </v-card-text>
@@ -119,6 +130,8 @@
             :key="icon"
             class="mx-4 white--text"
             icon
+            color="primary"
+            outlined
           >
             <v-icon size="24px">
               {{ icon }}
