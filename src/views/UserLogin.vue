@@ -4,14 +4,7 @@
     <v-container align="center" justify="center" class="mt-14">
       <v-row align="center" justify="center" class="mt-14">
         <v-col align="center" justify="center">
-          <v-card
-            flat
-            class="mx-auto"
-            max-width="600"
-            elevation="1"
-            light
-            hover
-          >
+          <v-card outlined class="mx-auto" max-width="600" light color="">
             <v-card-title class="d-flex mt-2">
               <h1 class="overline font-weight-bold" style="ali">LOGIN</h1>
               <v-spacer></v-spacer>
@@ -24,16 +17,20 @@
             <v-card-text>
               <v-form class="mt-4">
                 <v-text-field
-                  prepend-icon="mdi-account"
-                  name="name"
-                  label="Name"
+                  prepend-icon="mdi-email"
+                  :rules="userStore.emailRules"
+                  v-model="userStore.email"
+                  name="Email"
+                  label="Email"
                   type="text"
                 ></v-text-field>
 
                 <v-text-field
+                  :rules="userStore.passwordRules"
                   id="password"
                   name="password"
                   label="Password"
+                  v-model="userStore.password"
                   prepend-icon="mdi-lock"
                   append-outer-icon="mdi-eye"
                   type="password"
@@ -42,7 +39,7 @@
             </v-card-text>
             <v-divider class="mt-4"></v-divider>
             <v-card-actions>
-              <v-btn block dark> Login </v-btn>
+              <v-btn block dark @click="loginUser"> Login </v-btn>
             </v-card-actions>
             <v-divider class="mt-4"></v-divider>
             <v-card-actions class="mt-6">
@@ -64,20 +61,47 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-snackbar
+        rounded="pill"
+        v-model="userStore.snackbar"
+        top
+        centered
+        outlined
+        color="success"
+        elevation="24"
+      >
+        {{ userStore.message }}
+      </v-snackbar>
     </v-container>
   </div>
 </template>
 
-<script>
+<script setup>
 /* eslint-disable */
 import LandingAppBar from "@/components/LandingAppBar.vue";
-export default {
-  name: "UserLogin",
-  components: {
-    LandingAppBar,
-  },
+import { useUserStore } from "@/store/userStore";
+import { computed, onMounted } from "vue";
 
-  data: () => ({}),
+const components = {
+  LandingAppBar,
+};
+
+const openSnackBar = () => {
+  userStore.snackbar = true;
+  setTimeout(() => {
+    userStore.snackbar = false;
+  }, 3000);
+};
+
+const userStore = useUserStore();
+const loginUser = () => {
+  const user = {
+    email: userStore.email,
+    password: userStore.password,
+  };
+  console.log(user);
+  userStore.UserLogin(user);
+  openSnackBar();
 };
 </script>
 
