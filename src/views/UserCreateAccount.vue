@@ -4,48 +4,102 @@
     <v-row class="mainrow" no-gutters>
       <v-col cols="6">
         <div class="account_setup">
-          <v-card outlined>
+          <v-card outlined color="" flat hover exact>
             <v-card-title class="d-flex justify-center">
               <span class="headline">Create Account</span>
             </v-card-title>
             <v-card-text>
               <v-divider></v-divider>
-              <v-form>
+              <v-form lazy-validation ref="form" v-model="userStore.valid">
                 <v-text-field
+                  color="deep-purple accent-4"
                   prepend-icon="mdi-account"
                   name="name"
-                  label="Name"
+                  label="Username"
+                  v-model="userStore.username"
                   type="text"
                 ></v-text-field>
                 <v-text-field
+                  color="deep-purple accent-4"
                   prepend-icon="mdi-email"
                   name="email"
                   label="Email"
                   type="email"
+                  :rules="userStore.emailRules"
+                  v-model="userStore.email"
                 ></v-text-field>
                 <v-text-field
+                  color="deep-purple accent-4"
+                  hint="At least 8 characters"
                   id="password"
                   name="password"
                   label="Password"
+                  required
                   prepend-icon="mdi-lock"
-                  type="password"
+                  :append-icon="
+                    userStore.showPassword ? 'mdi-eye' : 'mdi-eye-off'
+                  "
+                  :type="userStore.showPassword ? 'text' : 'password'"
+                  :rules="userStore.passwordRules"
+                  @click:append="
+                    userStore.showPassword = !userStore.showPassword
+                  "
+                  v-model="userStore.password"
                 ></v-text-field>
                 <v-text-field
-                  id="password"
-                  name="Confirm Password"
+                  color="deep-purple accent-4"
                   label="Confirm Password"
+                  placeholder="Confirm Password"
                   prepend-icon="mdi-lock"
-                  type="password"
+                  required
+                  :type="userStore.showPassword ? 'text' : 'password'"
+                  @click:append="
+                    userStore.showPassword = !userStore.showPassword
+                  "
+                  :append-icon="
+                    userStore.showPassword ? 'mdi-eye' : 'mdi-eye-off'
+                  "
+                  v-model="userStore.confirm_password"
+                  hint="At least 8 characters"
+                  :rules="[
+                    (v) => !!v || 'Confirm password is required',
+                    (v) =>
+                      v === userStore.password || 'Password does not match',
+                  ]"
                 ></v-text-field>
 
                 <v-file-input
+                  color="deep-purple accent-4"
                   prepend-icon="mdi-camera"
                   name="pic"
                   label="Profile Picture"
                   type="file"
-                ></v-file-input>
+                  counter
+                  filled
+                  dense
+                  accept="image/*"
+                  show-size
+                  clear-icon="mdi-close-circle-outline"
+                  v-model="userStore.profile_pic_url"
+                  @change="userStore.onFileChange"
+                >
+                  <template v-slot:selection="{ text }">
+                    <v-chip small label color="success ">
+                      {{ text }}
+                    </v-chip>
+                  </template>
+                </v-file-input>
+                <v-img :src="userStore.imageUrl" class="ma-8" />
 
-                <v-textarea auto-grow label="Bio" rows="1" outlined>
+                <v-textarea
+                  color="deep-purple accent-4"
+                  auto-grow
+                  label="Bio"
+                  rows="1"
+                  outlined
+                  prepend-icon="mdi-text-box"
+                  v-model="userStore.bio"
+                >
                 </v-textarea>
               </v-form>
             </v-card-text>
@@ -54,7 +108,9 @@
               <v-btn color="blue darken-1" text outlined>Login</v-btn>
               <v-spacer></v-spacer>
               <!-- <v-btn color="blue darken-1" text>Cancel</v-btn> -->
-              <v-btn color="blue darken-1" text outlined>Create Account</v-btn>
+              <v-btn color="blue darken-1" text outlined @click="CreateAccount"
+                >Create Account</v-btn
+              >
             </v-card-actions>
           </v-card>
         </div>
@@ -78,11 +134,27 @@ import { computed, onMounted } from "vue";
 const components = {
   LandingAppBar,
 };
-const Store = useUserStore();
-const users = computed(() => Store.getUsers);
+const userStore = useUserStore();
+const users = computed(() => userStore.getUsers);
+
+const CreateAccount = () => {
+  // alert("Create Account");
+  const user = {
+    username: userStore.username,
+    email: userStore.email,
+    password: userStore.password,
+    confirm_password: userStore.confirm_password,
+    profile_pic_url: userStore.profile_pic_url,
+    bio: userStore.bio,
+  };
+  // pass user as query paramerter
+  userStore.UserRegister(user);
+  console.log(user);
+};
+
 // console.log(users);
 onMounted(async () => {
-  await Store.fetchUsers();
+  await userStore.fetchUsers();
 });
 </script>
 
