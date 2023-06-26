@@ -1,5 +1,12 @@
 <template>
-  <v-carousel height="400" hide-delimiter-background show-arrows-on-hover cycle>
+  <v-carousel
+    dark
+    height="600"
+    hide-delimiter-background
+    show-arrows-on-hover
+    cycle
+    class="opacity-carousel elevation-0"
+  >
     <v-carousel-item
       v-for="(item, i) in items"
       :key="i"
@@ -7,11 +14,18 @@
       reverse-transition="fade-transition"
       transition="fade-transition"
       height="600"
+      class="carousel-item-card"
     >
       <!-- make the v-sheet transparent -->
       <!-- <v-sheet height="100%" color="transparent">
         <v-row class="fill-height ma-0" align="center" justify="center">
-          <div class="display-3">{{ item.caption }}</div>
+          <div class="display-3">
+            <h1
+              class="text-center white--text font-weight-bold display-1 mt-6 mb-6"
+            >
+              {{ item.caption }}
+            </h1>
+          </div>
         </v-row>
       </v-sheet> -->
     </v-carousel-item>
@@ -53,8 +67,22 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-carousel-item__image {
   object-fit: cover;
+}
+.opacity-carousel .carousel-item-card {
+  transition: opacity 0.3s;
+  opacity: 0.7;
+}
+
+.opacity-carousel .carousel-item-card.v-enter,
+.opacity-carousel .carousel-item-card.v-leave-to {
+  opacity: 0;
+}
+
+.opacity-carousel .carousel-item-card.v-enter-active,
+.opacity-carousel .carousel-item-card.v-leave-active {
+  opacity: 1;
 }
 </style>
