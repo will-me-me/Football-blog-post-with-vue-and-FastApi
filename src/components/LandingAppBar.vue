@@ -1,7 +1,9 @@
 <template>
   <div>
     <v-app-bar color="#2962FF" id="appbar" dense outlined dark app fixed>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click.stop="userStore.drawer = !userStore.drawer"
+      ></v-app-bar-nav-icon>
       <!-- <v-app-bar-icon>
         <v-icon x-large>mdi-soccer</v-icon>
       </v-app-bar-icon> -->
@@ -11,13 +13,19 @@
       <v-btn rounded text class="ma-6" @click="ToLoginPath">Login</v-btn>
       <v-btn rounded text class="ma-6" @click="ToCreateAccount">Sign in</v-btn>
       <v-spacer></v-spacer>
-      <v-btn rounded text class="ma-6" @click="OpenblogDialog">
+      <v-btn
+        rounded
+        text
+        class="ma-6"
+        @click="OpenblogDialog"
+        v-if="userStore.userLoggedIn == true"
+      >
         <v-icon small left> mdi-plus-circle </v-icon>
         Add Blog
       </v-btn>
       <!-- </div> -->
     </v-app-bar>
-    <v-dialog persistent v-model="Addblogdialog" width="500">
+    <v-dialog persistent v-model="userStore.Addblogdialog" width="500">
       <v-card width="600" outlined>
         <v-card-title class="d-flex justify-center">
           <span class="caption overline">Add Blog</span>
@@ -60,11 +68,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn
-            color="blue darken-1"
-            text
-            outlined
-            @click="Addblogdialog = false"
+          <v-btn color="blue darken-1" text outlined @click="closeDialog"
             >Cancel</v-btn
           >
           <v-spacer></v-spacer>
@@ -90,21 +94,27 @@
     </v-dialog>
 
     <v-progress-linear
-      v-if="showProgressBar"
+      v-if="userStore.showProgressBar"
       color="teal"
       buffer-value="0"
-      value="20"
+      value="5"
       stream
     ></v-progress-linear>
     <v-progress-linear
-      v-if="showProgressBarreverse"
+      v-if="userStore.showProgressBarreverse"
       buffer-value="55"
       color="success"
       reverse
       stream
-      value="30"
+      value="50"
     ></v-progress-linear>
-    <v-navigation-drawer v-model="drawer" absolute bottom temporary dark>
+    <v-navigation-drawer
+      v-model="userStore.drawer"
+      absolute
+      bottom
+      temporary
+      dark
+    >
       <v-list class="mt-4">
         <v-list-item class="px-14">
           <v-list-item-avatar class="">
@@ -128,7 +138,8 @@
       <v-divider></v-divider>
 
       <v-list class="mt-14">
-        <v-list-item v-for="(icon, i) in items" :key="i" link>
+        <v-list-item v-for="(icon, i) in userStore.items" :key="i" link>
+          <!-- {{ userStore.items }} -->
           <v-list-item-icon>
             <v-icon>{{ icon.icon }}</v-icon>
           </v-list-item-icon>
@@ -146,79 +157,59 @@
   </div>
 </template>
 
-<script>
+<script setup>
 // import { set } from 'vue/types/umd';
 /* eslint-disable */
-export default {
-  components: {},
-  data: () => ({
-    overlay: false,
-    Addblogdialog: false,
-    showProgressBar: false,
-    showProgressBarreverse: false,
-    value: 0,
-    drawer: false,
-    items: [
-      { title: "Home", icon: "mdi-home", link: "/" },
-      { title: "Blogs", icon: "mdi-information", link: "/Blogs" },
-    ],
-  }),
+import router from "@/router";
+import { useUserStore } from "@/store/userStore";
+import { computed, onMounted } from "vue";
 
-  computed: {
-    // CurrentPath() {
-    //   return this.showProgressBar;
-    // },
-    // //
-  },
+const userStore = useUserStore();
 
-  methods: {
-    ToLoginPath() {
-      const CurrentPath = this.$router.currentRoute.path;
-      if (CurrentPath !== "/login") {
-        this.showProgressBar = true;
-        // this.showProgressBarreverse = true;
-        setTimeout(() => {
-          this.$router.push("/login");
-        }, 1500);
-      }
-    },
+const overlay = computed(() => userStore.overlay);
 
-    OpenblogDialog() {
-      this.Addblogdialog = true;
-      this.overlay = true;
-      setTimeout(() => {
-        this.overlay = false;
-        // this.Addblogdialog = false;
-      }, 1500);
-    },
+const ToLoginPath = () => {
+  const CurrentPath = router.currentRoute.path;
+  if (CurrentPath !== "/login") {
+    userStore.showProgressBar = true;
+    setTimeout(() => {
+      router.push("/login");
+      userStore.showProgressBar = false;
+    }, 1500);
+  }
+};
+const ToCreateAccount = () => {
+  const CurrentPath = router.currentRoute.path;
+  if (CurrentPath !== "/register") {
+    userStore.showProgressBarreverse = true;
+    setTimeout(() => {
+      router.push("/register");
+      userStore.showProgressBarreverse = false;
+    }, 1500);
+  }
+};
 
-    ToCreateAccount() {
-      const CurrentPath = this.$router.currentRoute.path;
-
-      if (CurrentPath !== "/register") {
-        this.showProgressBarreverse = true;
-        setTimeout(() => {
-          this.$router.push("/register");
-        }, 1500);
-      }
-    },
-    ToBlogsPath() {
-      const CurrentPath = this.$router.currentRoute.path;
-
-      if (CurrentPath !== "/blogs") {
-        this.showProgressBarreverse = true;
-        setTimeout(() => {
-          this.$router.push("/blogs");
-        }, 1500);
-      }
-    },
-
-    openDrawer() {
-      this.drawer = true;
-    },
-
-    //
-  },
+const ToBlogsPath = () => {
+  const CurrentPath = router.currentRoute.path;
+  if (CurrentPath !== "/blogs") {
+    userStore.showProgressBarreverse = true;
+    setTimeout(() => {
+      router.push("/blogs");
+      userStore.showProgressBarreverse = false;
+    }, 1500);
+  }
+};
+const OpenblogDialog = () => {
+  userStore.Addblogdialog = true;
+  userStore.showProgressBar = true;
+  userStore.overlay = true;
+  setTimeout(() => {
+    userStore.showProgressBar = false;
+    userStore.overlay = false;
+  }, 1500);
+};
+const closeDialog = () => {
+  userStore.Addblogdialog = false;
 };
 </script>
 
