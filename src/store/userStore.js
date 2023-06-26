@@ -2,14 +2,12 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
-// import { set } from "core-js/core/dict";
-
-const passwordMatchRule = (v) =>
-  v === this.password || "Password does not match";
+// import { useRoute } from "vue-router";
+// import { useRouter } from "vue-router";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    valid: true,
+    valid: false,
     users: [],
     email: "",
     password: "",
@@ -24,11 +22,23 @@ export const useUserStore = defineStore("user", {
       (v) => v.length >= 8 || "Password must be at least 8 characters",
     ],
     bio: "",
-    profile_pic_url: undefined,
+    profile_pic_url: "",
     confirm_password: "",
     username: "",
     showPassword: false,
     imageUrl: "",
+    userLoggedIn: false,
+
+    overlay: false,
+    Addblogdialog: false,
+    showProgressBar: false,
+    showProgressBarreverse: false,
+    value: 0,
+    drawer: false,
+    items: [
+      { title: "Home", icon: "mdi-home", link: "/" },
+      { title: "Blogs", icon: "mdi-information", link: "/Blogs" },
+    ],
 
     //
   }),
@@ -36,23 +46,43 @@ export const useUserStore = defineStore("user", {
     getUsers() {
       return this.users;
     },
+    validForm() {
+      return (
+        this.email != "" &&
+        this.password != "" &&
+        this.confirm_password != "" &&
+        this.bio != "" &&
+        this.username != "" &&
+        this.profile_pic_url != ""
+      );
+    },
+    checkIfLoggedIn() {
+      return this.userLoggedIn;
+    },
   },
   actions: {
+    openDrawer() {
+      this.drawer = true;
+    },
+    onFileReadCompleted(file) {
+      this.profile_pic_url = file;
+    },
     createImage(file) {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        this.imageUrl = e.target.result;
+        this.onFileReadCompleted(file);
       };
       reader.readAsDataURL(file);
     },
-    onFileChange(file) {
+    onFileChange(event) {
+      const file = event.target.files[0];
+
       if (!file) {
         return;
       }
       this.createImage(file);
     },
-
     async fetchUsers() {
       console.log("fetching users");
       const response = await axios.get(
@@ -78,41 +108,50 @@ export const useUserStore = defineStore("user", {
       } else if (response.data == "Incorrect password") {
         this.message = "Incorrect password";
       } else {
-        localStorage.setItem("token", response.data.token);
-        ("mwehacharlse@gmail.com");
-
         this.message = "Login successful";
+        this.snackbar = true;
+        localStorage.setItem("token", response.data.token);
+        console.log(localStorage.getItem("token"));
+        this.userLoggedIn = true;
+        router.push("/blogs");
       }
     },
-    async UserRegister(user) {
-      // const user = {
-      //   username: this.username,
-      //   email: this.email,
-      //   password: this.password,
-      //   confirm_password: this.confirm_password,
-      //   profile_pic_url: this.profile_pic_url,
-      //   bio: this.bio,
-      // };
-      console.log("registering user");
-      //  pass user as query parameters
-      const response = await axios.post(
-        "http://127.0.0.1:8000/users/create-user?username=" +
-          user.username +
-          "&email=" +
-          user.email +
-          "&password=" +
-          user.password +
-          "&confirm_password=" +
-          user.confirm_password +
-          "&profile_pic_url=" +
-          user.profile_pic_url +
-          "&bio=" +
-          user.bio
-      );
-      console.log(response.data);
-      console.log(response.data.token);
+    async UserRegister(formData) {
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/users/create-user?username=$
+          {this.username}&email=${this.email}
+          &password=${this.password}&confirm_password=
+          ${this.confirm_password}&bio=${this.bio}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              accept: "application/json",
+            },
+          }
+        );
+
+        console.log(response.data);
+        console.log(response.data.token);
+      } catch (error) {
+        console.error(error);
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+          console.error("Response headers:", error.response.headers);
+        }
+      }
     },
 
+    clearInputs() {
+      this.email = "";
+      this.password = "";
+      this.confirm_password = "";
+      this.bio = "";
+      this.username = "";
+      this.profile_pic_url = "";
+    },
     async UserLogout() {
       set(this, "email", "");
       set(this, "password", "");

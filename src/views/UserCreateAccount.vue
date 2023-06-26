@@ -77,7 +77,6 @@
                   counter
                   filled
                   dense
-                  accept="image/*"
                   show-size
                   clear-icon="mdi-close-circle-outline"
                   v-model="userStore.profile_pic_url"
@@ -89,7 +88,6 @@
                     </v-chip>
                   </template>
                 </v-file-input>
-                <v-img :src="userStore.imageUrl" class="ma-8" />
 
                 <v-textarea
                   color="deep-purple accent-4"
@@ -108,7 +106,12 @@
               <v-btn color="blue darken-1" text outlined>Login</v-btn>
               <v-spacer></v-spacer>
               <!-- <v-btn color="blue darken-1" text>Cancel</v-btn> -->
-              <v-btn color="blue darken-1" text outlined @click="CreateAccount"
+              <v-btn
+                color="blue darken-1"
+                text
+                outlined
+                @click="CreateAccount"
+                :disabled="!validateForm"
                 >Create Account</v-btn
               >
             </v-card-actions>
@@ -137,19 +140,21 @@ const components = {
 const userStore = useUserStore();
 const users = computed(() => userStore.getUsers);
 
+const validateForm = computed(() => userStore.validForm);
+
+const clearForm = () => {
+  return userStore.clearInputs();
+};
+
 const CreateAccount = () => {
-  // alert("Create Account");
-  const user = {
-    username: userStore.username,
-    email: userStore.email,
-    password: userStore.password,
-    confirm_password: userStore.confirm_password,
-    profile_pic_url: userStore.profile_pic_url,
-    bio: userStore.bio,
-  };
-  // pass user as query paramerter
-  userStore.UserRegister(user);
-  console.log(user);
+  const formData = new FormData();
+  formData.append("profile_pic_url", userStore.profile_pic_url);
+  userStore.UserRegister(formData);
+
+  //clearform
+  clearForm();
+
+  // Pass the form data to the UserRegister function
 };
 
 // console.log(users);
