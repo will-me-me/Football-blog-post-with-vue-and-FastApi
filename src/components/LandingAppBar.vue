@@ -37,6 +37,7 @@
             prepend-icon="mdi-book-open-page-variant"
             name="Title"
             label="Title"
+            v-model="blogStore.title"
             type="text"
           ></v-text-field>
           <v-textarea
@@ -45,6 +46,7 @@
             label="Content"
             rows="1"
             outlined
+            v-model="blogStore.content"
             prepend-icon="mdi-book-open-page-variant"
           ></v-textarea>
           <v-file-input
@@ -53,6 +55,8 @@
             name="pic"
             label="media"
             type="file"
+            counter
+            v-model="blogStore.images"
             chips
             filled
             multiple
@@ -162,9 +166,11 @@
 /* eslint-disable */
 import router from "@/router";
 import { useUserStore } from "@/store/userStore";
+import { useBlogStore } from "@/store/blogStore";
 import { computed, onMounted } from "vue";
 
 const userStore = useUserStore();
+const blogStore = useBlogStore();
 
 const overlay = computed(() => userStore.overlay);
 
