@@ -119,10 +119,9 @@ export const useUserStore = defineStore("user", {
     async UserRegister(formData) {
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/users/create-user?username=$
-          {this.username}&email=${this.email}
-          &password=${this.password}&confirm_password=
-          ${this.confirm_password}&bio=${this.bio}`,
+          `http://127.0.0.1:8000/users/create-user?username=
+          ${this.username}&email=${this.email}
+          &password=${this.password}&confirm_password=${this.confirm_password}&bio=${this.bio}`,
           formData,
           {
             headers: {
