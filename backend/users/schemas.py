@@ -32,6 +32,8 @@ class User(BaseModel):
     
     
     def confirm_passwords_match(self):
+        print("password: ", self.password)
+        print("confirm_password: ", self.confirm_password)
         if self.password == self.confirm_password:
             return True
         raise ValueError("Passwords do not match")

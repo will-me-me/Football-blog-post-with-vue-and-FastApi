@@ -62,6 +62,10 @@ async def save_profile_picture(images: Optional[UploadFile] = None):
             raise HTTPException(status_code=400, detail="Invalid image format")
     return saved_images
 
+def confirm_pass_match(password: str, confirm_password: str):
+    return password == confirm_password
+
+
 
 async def create_user(username: str, email: str,  password: str, confirm_password:str,  bio: str, profile_pic_url: Optional[UploadFile] = None):
     user = User( 
@@ -73,7 +77,8 @@ async def create_user(username: str, email: str,  password: str, confirm_passwor
         profile_pic_url=profile_pic_url,
     )
 
-    print("user: ", user)
+    print("new_user: ", user.password)
+    print("new_user: ", user.confirm_password)
     
     user_dict = user.user_dict()
     

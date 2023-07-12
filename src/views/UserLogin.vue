@@ -59,7 +59,7 @@
                     <v-icon> mdi-lock-reset </v-icon>
                   </v-btn>
                 </template>
-                <span>Forgot Password</span>
+                <span class="caption">Forgot Password</span>
               </v-tooltip>
               <v-spacer></v-spacer>
               <v-tooltip bottom color="blue" class="mt-1">
