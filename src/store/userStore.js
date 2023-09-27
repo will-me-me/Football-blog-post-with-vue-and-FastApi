@@ -39,6 +39,8 @@ export const useUserStore = defineStore("user", {
       { title: "Home", icon: "mdi-home", link: "/" },
       { title: "Blogs", icon: "mdi-information", link: "/Blogs" },
     ],
+    currentUser: {},
+    curreUserprofile: null,
 
     //
   }),
@@ -90,6 +92,14 @@ export const useUserStore = defineStore("user", {
       );
       this.users = response.data;
     },
+    parseJwt(token) {
+      try {
+        return JSON.parse(atob(token.split(".")[1]));
+      } catch (e) {
+        return null;
+      }
+    },
+
     async UserLogin(user) {
       user = {
         email: this.email,
@@ -111,17 +121,21 @@ export const useUserStore = defineStore("user", {
         this.message = "Login successful";
         this.snackbar = true;
         localStorage.setItem("token", response.data.token);
-        console.log(localStorage.getItem("token"));
         this.userLoggedIn = true;
         router.push("/blogs");
+        const currentUser = this.parseJwt(response.data.token);
+        console.log(currentUser);
+        this.currentUser = currentUser;
+        console.log(this.currentUser);
+        const profile_pic_url = this.currentUser.profile_pic_url[0];
+        console.log(profile_pic_url);
+        this.curreUserprofile = profile_pic_url;
       }
     },
     async UserRegister(formData) {
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/users/create-user?username=
-          ${this.username}&email=${this.email}
-          &password=${this.password}&confirm_password=${this.confirm_password}&bio=${this.bio}`,
+          `http://127.0.0.1:8000/users/create-user?username=${this.username}&email=${this.email}&password=${this.password}&confirm_password=${this.confirm_password}&bio=${this.bio}`,
           formData,
           {
             headers: {
@@ -130,9 +144,6 @@ export const useUserStore = defineStore("user", {
             },
           }
         );
-
-        console.log(response.data);
-        console.log(response.data.token);
       } catch (error) {
         console.error(error);
         if (error.response) {

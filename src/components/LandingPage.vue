@@ -63,6 +63,18 @@
         </h1>
       </div>
     </div>
+    <!-- <div
+      style="
+        background-image: url('https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt209db9312ce8d1fe/6364c712a803a24d15c8884d/Mbappe_Haaland_.jpg?auto=webp&format=pjpg&width=1080&quality=60');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        width: 100vw;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.9);
+      "
+    ></div> -->
 
     <div id="carusel_div">
       <v-container>

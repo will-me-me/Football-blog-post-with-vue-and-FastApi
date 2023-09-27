@@ -12,31 +12,20 @@ from pydantic import EmailStr
 from auth.jwt_handler import jwt_dependecy, sign_jwt
 import uuid
 from fastapi.encoders import jsonable_encoder
-from posts.models import  allowed_file, get_post_by_user_id, save_images
+from posts.models import allowed_file, get_post_by_user_id
 from werkzeug.utils import secure_filename
+from fastapi import UploadFile
+from users.schemas import User, UserLogin, UserOut, UserUpdate
 
-from users.schemas import User, UserLogin, UserOut, UserUpdate 
-
-UPLOAD_FOLDER = 'static/profile_pic/'
-ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+UPLOAD_FOLDER = "static/profile_pic/"
+ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "gif"]
 
 
 def encrypt_password(password: str):
-    print("password:", password)
-    return bcrypt.hashpw(
-        password.encode(),
-        bcrypt.gensalt()
-    ).decode()
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-def compare_passwords(pass_1:str, pass_2:str):
-    print("pass_1:", pass_1)
-    print("pass_2:", pass_2)
-    # print(pass_1, pass_2)
-    encode_pass_1 = pass_1.encode()
-    encode_pass_2 = pass_2.encode()
-    print("encode_pass_1:", encode_pass_1)
-    print("encode_pass_2:", encode_pass_2)
-    print("bcrypt.checkpw(encode_pass_1, encode_pass_2):", bcrypt.checkpw(encode_pass_1, encode_pass_2))
+
+def compare_passwords(pass_1: str, pass_2: str):
     return bcrypt.checkpw(pass_1.encode(), pass_2.encode())
 
 
@@ -52,7 +41,7 @@ async def save_profile_picture(images: Optional[UploadFile] = None):
             print("absolute_path:", absolute_path)
             print(image_url)
             image_url = absolute_path
-            async with aiofiles.open(image_path, 'wb') as buffer:
+            async with aiofiles.open(image_path, "wb") as buffer:
                 content = await images.read()
                 # print(content)
                 await buffer.write(content)
@@ -62,13 +51,20 @@ async def save_profile_picture(images: Optional[UploadFile] = None):
             raise HTTPException(status_code=400, detail="Invalid image format")
     return saved_images
 
+
 def confirm_pass_match(password: str, confirm_password: str):
     return password == confirm_password
 
 
-
-async def create_user(username: str, email: str,  password: str, confirm_password:str,  bio: str, profile_pic_url: Optional[UploadFile] = None):
-    user = User( 
+async def create_user(
+    username: str,
+    email: str,
+    password: str,
+    confirm_password: str,
+    bio: str,
+    profile_pic_url: Optional[UploadFile] = None,
+):
+    user = User(
         username=username,
         email=email,
         password=password,
@@ -77,33 +73,36 @@ async def create_user(username: str, email: str,  password: str, confirm_passwor
         profile_pic_url=profile_pic_url,
     )
 
-    print("new_user: ", user.password)
-    print("new_user: ", user.confirm_password)
-    
     user_dict = user.user_dict()
-    
-    '''make the profile_pic_url an optional field and set a default value if it is empty'''
-    if user_dict['profile_pic_url'] == None:
-        user_dict['profile_pic_url'] = ['https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png']
+
+    """make the profile_pic_url an optional field and set a default value if it is empty"""
+    if user_dict["profile_pic_url"] is None:
+        user_dict["profile_pic_url"] = [
+            "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+        ]
     else:
-        user_dict['profile_pic_url'] = await save_profile_picture(user_dict['profile_pic_url'])
-    print("user_password:", user_dict['password'])
-    user_dict['password'] = encrypt_password(user_dict['password']) 
-    user_dict['updated_at'] = datetime.now()
-    
-    '''check if the user already exists'''
-    if db.users.find_one({"email": user_dict['email']}):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User already exists"
+        user_dict["profile_pic_url"] = await save_profile_picture(
+            user_dict["profile_pic_url"]
         )
-    '''confirm password match'''
+    print("user_password:", user_dict["password"])
+    user_dict["password"] = encrypt_password(user_dict["password"])
+    user_dict["updated_at"] = datetime.now()
+
+    """check if the user already exists"""
+    if db.users.find_one({"email": user_dict["email"]}):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
+        )
+    """confirm password match"""
     user.confirm_passwords_match()
+    """save the user to the database"""
+    print("user_dict:", user_dict)
     user = db.users.insert_one(user_dict)
     user = db.users.find_one({"_id": user.inserted_id})
-    user["_id"] = str(user["_id"])
-    
+    user["id"] = str(user["_id"])
+    user.pop("_id")
     return user
+
 
 
 def get_all_users():
@@ -111,10 +110,13 @@ def get_all_users():
     all_users = []
     for user in users:
         user = UserOut(**user)
-        user.profile_pic_url =[str(url) for url in user.profile_pic_url] if user.profile_pic_url else None
-        user = user.dict()
+        user.profile_pic_url = (
+            [str(url) for url in user.profile_pic_url] if user.profile_pic_url else None
+        )
+        user = user.model_dump()
         all_users.append(user)
     return all_users
+
 
 def user_login(user_login: UserLogin):
     email = user_login.email
@@ -123,66 +125,50 @@ def user_login(user_login: UserLogin):
     print(user)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
     print(user["password"])
     if not compare_passwords(password, user["password"]):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid credentials"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials"
         )
-    user["_id"] = str(user["_id"])
-    owner = user['_id']
+    user["id"] = str(user["_id"])
+    owner = user["id"]
     posts = get_post_by_user_id(owner)
-    user = UserOut(**user).dict()
+    print(user)
+    user = UserOut(**user).model_dump()
     user["posts"] = posts
     user = jsonable_encoder(user)
     token = sign_jwt(user)
     return {"token": token, "user": user}
 
+
 async def get_current_user_id(request: Request, token: str = Security(jwt_dependecy)):
-    user = db.users.find_one({"_id": ObjectId(token)})
+    user = db.users.find_one({"id": ObjectId(token)})
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    user["_id"] = str(user["_id"])
-    print(user['_id'])
+    user["id"] = str(user["id"])
+    print(user["id"])
     return user
 
+
 def update_user_by_id(user_id: str, updated_user: UserUpdate):
-    user = db.users.find_one({"_id": ObjectId(user_id)})
+    user = db.users.find_one({"id": ObjectId(user_id)})
     print("user")
     print(user)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    updated_user = updated_user.dict(exclude_unset=True)
+    updated_user = updated_user.model_dump(exclude_unset=True)
     if "password" in updated_user:
         updated_user["password"] = encrypt_password(updated_user["password"])
     # if profile_pic:
     #     updated_user["profile_pic_url"] = save_profile_picture(profile_pic)
     updated_user["updated"] = str(datetime.now())
-    user = db.users.update_one(
-        {"_id": ObjectId(user_id)},
-        {"$set": updated_user}
-    )
-    user = db.users.find_one({"_id": ObjectId(user_id)})
-    user["_id"] = str(user["_id"])
+    user = db.users.update_one({"id": ObjectId(user_id)}, {"$set": updated_user})
+    user = db.users.find_one({"id": ObjectId(user_id)})
+    user["id"] = str(user["id"])
     return user
-
-
-
-   
-    
-   
-
-
-
-
-    
-

@@ -23,6 +23,8 @@
         <v-icon small left> mdi-plus-circle </v-icon>
         Add Blog
       </v-btn>
+      <!-- v-if="userStore.userLoggedIn == true" -->
+
       <!-- </div> -->
     </v-app-bar>
     <v-dialog persistent v-model="userStore.Addblogdialog" width="500">
@@ -122,19 +124,18 @@
       <v-list class="mt-4">
         <v-list-item class="px-14">
           <v-list-item-avatar class="">
-            <v-img
-              src="https://randomuser.me/api/portraits/women/85.jpg"
-              sizes="600px"
-            ></v-img>
+            <v-img :src="userStore.curreUserprofile" sizes="600px"></v-img>
           </v-list-item-avatar>
         </v-list-item>
 
         <v-list-item link>
           <v-list-item-content>
             <v-list-item-title class="text-h6">
-              Sandra Adams
+              {{ userStore.currentUser.username }}
             </v-list-item-title>
-            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+            <v-list-item-subtitle>{{
+              userStore.currentUser.email
+            }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
