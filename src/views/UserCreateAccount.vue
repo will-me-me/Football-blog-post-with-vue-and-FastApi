@@ -68,7 +68,7 @@
                   ]"
                 ></v-text-field>
 
-                <v-file-input
+                <!-- <v-file-input
                   color="deep-purple accent-4"
                   prepend-icon="mdi-camera"
                   name="pic"
@@ -87,7 +87,7 @@
                       {{ text }}
                     </v-chip>
                   </template>
-                </v-file-input>
+                </v-file-input> -->
 
                 <v-textarea
                   color="deep-purple accent-4"

@@ -19,7 +19,7 @@ class User(BaseModel):
     password: str
     confirm_password: str
     bio: Optional[str]
-    profile_pic_url: Optional[UploadFile] = Field(None)
+    # profile_pic_url: Optional[UploadFile] = Field(None)
     created: Optional[datetime] = None
     # user_id = ObjectId()
 
@@ -37,13 +37,13 @@ class User(BaseModel):
         return value  # Return value as-is if it's None
 
 
-    @validator("profile_pic_url", pre=True, always=True)
-    def set_profile_pic_url(cls, value):
-        if value == []:
-            return [
-                "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-            ]
-        return value
+    # @validator("profile_pic_url", pre=True, always=True)
+    # def set_profile_pic_url(cls, value):
+    #     if value == []:
+    #         return [
+    #             "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+    #         ]
+    #     return value
 
     def confirm_passwords_match(self):
         print("password: ", self.password)
@@ -80,7 +80,7 @@ class UserOut(BaseModel):
     id: str 
     username: str
     email: str
-    profile_pic_url: Optional[List[str]]
+    # profile_pic_url: Optional[List[str]]
     posts: list = []
     created: Optional[datetime] = None
     # user_id = bool = True

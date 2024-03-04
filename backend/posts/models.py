@@ -53,7 +53,7 @@ async def save_images(images: List[UploadFile]):
             # print("image_path", image_path)
             async with aiofiles.open(image_path, "wb") as f:
                 await f.write(await image.read())
-                url = "localhost:8008/static/images/" + image_path.split("/")[-1]
+                url ={"src": "localhost:8008/static/images/" + image_path.split("/")[-1]}
                 # print("url", url)
                 saved_images.append(url)
     return saved_images

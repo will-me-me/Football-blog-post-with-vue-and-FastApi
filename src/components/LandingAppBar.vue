@@ -78,11 +78,7 @@
             >Cancel</v-btn
           >
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            outlined
-            @click="Addblogdialog = false"
+          <v-btn color="blue darken-1" text outlined @click="AddBlog"
             >Add Blog</v-btn
           >
         </v-card-actions>
@@ -217,6 +213,13 @@ const OpenblogDialog = () => {
 };
 const closeDialog = () => {
   userStore.Addblogdialog = false;
+};
+const AddBlog = () => {
+  const formData = new FormData();
+  formData.append("images", blogStore.images);
+
+  blogStore.addBlog(formData);
+  // alert("Blog Added");
 };
 </script>
 

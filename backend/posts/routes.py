@@ -37,6 +37,7 @@ async def create_post(
 ):
     print("user", user)
     saved_images = await post_models.save_images(images)
+    # saved_images =  [{"src": image} for image in saved_images]
     #create post
     print("creating the post")
     post = {
@@ -58,7 +59,6 @@ async def create_post(
     """add post_id """
     post_data["post_id"] = str(ObjectId())
     print('post_data', post_data)
-
     """save post to db"""
     post = db.posts.insert_one(post_data)
     print("post", post)

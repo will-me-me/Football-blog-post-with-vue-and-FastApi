@@ -62,7 +62,7 @@ async def create_user(
     password: str,
     confirm_password: str,
     bio: str,
-    profile_pic_url: Optional[UploadFile] = None,
+    # profile_pic_url: Optional[UploadFile] = File(...),
 ):
     user = User(
         username=username,
@@ -70,20 +70,20 @@ async def create_user(
         password=password,
         confirm_password=confirm_password,
         bio=bio,
-        profile_pic_url=profile_pic_url,
+        # profile_pic_url=profile_pic_url,
     )
 
     user_dict = user.user_dict()
 
-    """make the profile_pic_url an optional field and set a default value if it is empty"""
-    if user_dict["profile_pic_url"] is None:
-        user_dict["profile_pic_url"] = [
-            "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-        ]
-    else:
-        user_dict["profile_pic_url"] = await save_profile_picture(
-            user_dict["profile_pic_url"]
-        )
+    # """make the profile_pic_url an optional field and set a default value if it is empty"""
+    # if user_dict["profile_pic_url"] == []:
+    #     user_dict["profile_pic_url"] = [
+    #         "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+    #     ]
+    # else:
+    #     user_dict["profile_pic_url"] = await save_profile_picture(
+    #         user_dict["profile_pic_url"]
+    #     )
     print("user_password:", user_dict["password"])
     user_dict["password"] = encrypt_password(user_dict["password"])
     user_dict["updated_at"] = datetime.now()
@@ -107,15 +107,13 @@ async def create_user(
 
 def get_all_users():
     users = db.users.find({})
-    all_users = []
-    for user in users:
-        user = UserOut(**user)
-        user.profile_pic_url = (
-            [str(url) for url in user.profile_pic_url] if user.profile_pic_url else None
-        )
-        user = user.model_dump()
-        all_users.append(user)
-    return all_users
+    user_list = [UserOut(**{**user, 'id': str(user['_id'])}) for user in users]
+    user_list = [user.model_dump() for user in user_list]
+    for user in user_list:
+        user["posts"] = get_post_by_user_id(user["id"])
+        
+    return user_list
+    
 
 
 def user_login(user_login: UserLogin):

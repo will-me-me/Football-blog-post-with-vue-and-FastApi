@@ -22,10 +22,10 @@ async def create_user(
     password: str,
     confirm_password: str,
     bio: str,
-    profile_pic_url: Optional[UploadFile] = File(None),
+    # profile_pic_url: Optional[UploadFile] = File( None),
 ):
     return await user_models.create_user(
-         username, email, password, confirm_password, bio, profile_pic_url
+         username, email, password, confirm_password, bio
     )
 
 

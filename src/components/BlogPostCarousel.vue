@@ -1,10 +1,9 @@
 <template>
   <v-carousel
     dark
-    height="600"
+    height="300"
     hide-delimiter-background
     show-arrows-on-hover
-    cycle
     class="opacity-carousel elevation-0"
   >
     <v-carousel-item
@@ -13,7 +12,7 @@
       :src="item.link"
       reverse-transition="fade-transition"
       transition="fade-transition"
-      height="600"
+      height="300"
       class="carousel-item-card"
     >
       <!-- make the v-sheet transparent -->

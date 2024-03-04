@@ -63,7 +63,8 @@
         </h1>
       </div>
     </div>
-    <!-- <div
+
+    <div
       style="
         background-image: url('https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt209db9312ce8d1fe/6364c712a803a24d15c8884d/Mbappe_Haaland_.jpg?auto=webp&format=pjpg&width=1080&quality=60');
         background-repeat: no-repeat;
@@ -71,10 +72,12 @@
         background-position: center;
         height: 100vh;
         width: 100vw;
-        opacity: 1;
+        opacity: 0.6;
         background-color: rgba(0, 0, 0, 0.9);
       "
-    ></div> -->
+    >
+      <h1 class="text-center justify-center">All in Safe hands</h1>
+    </div>
 
     <div id="carusel_div">
       <v-container>
@@ -321,14 +324,6 @@ export default {
 };
 </script>
 <style scoped>
-.herodiv {
-  background-image: url("../assets/adidasBoots.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.9;
-  background-blend-mode: darken;
-}
 .circular-image {
   border-radius: 50%;
   width: 40px;
@@ -342,14 +337,6 @@ export default {
 #card_text {
   font-size: larger;
   font-weight: 1000;
-}
-
-.actions {
-  border-radius: 10px;
-}
-.actions:hover {
-  background-color: #e1e6e9;
-  color: white;
 }
 
 #carusel_div {

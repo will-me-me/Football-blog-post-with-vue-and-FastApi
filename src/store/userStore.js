@@ -54,8 +54,7 @@ export const useUserStore = defineStore("user", {
         this.password != "" &&
         this.confirm_password != "" &&
         this.bio != "" &&
-        this.username != "" &&
-        this.profile_pic_url != ""
+        this.username != ""
       );
     },
     checkIfLoggedIn() {

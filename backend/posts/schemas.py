@@ -11,12 +11,14 @@ import posts.models as post_models
 
 # from users.schemas import User
 
+class ImageObject(BaseModel):
+    src: str
 
 class Post(BaseModel):
     # id: Optional[str]
     title: str
     content: str
-    images: List[str]
+    images: List[object]
     created_at: Optional[str] 
     owner: Optional[str] 
     post_id: Optional[str] 
